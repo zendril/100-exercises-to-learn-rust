@@ -3,17 +3,49 @@
 //  The docs for the `std::fmt` module are a good place to start and look for examples:
 //  https://doc.rust-lang.org/std/fmt/index.html#write
 
+use std::error::Error;
+use std::fmt::{Display, Formatter};
+use std::os::linux::raw::stat;
+
+#[derive(Debug)]
 enum TicketNewError {
     TitleError(String),
     DescriptionError(String),
 }
+
+impl Error for TicketNewError {}
+
+impl Display for TicketNewError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match &self {
+            TicketNewError::TitleError(error) | TicketNewError::DescriptionError(error) => {
+                write!(f, "{error}")
+            }
+        }
+
+    }
+}
+
+// impl Error for TicketNewError {
+//
+// }
 
 // TODO: `easy_ticket` should panic when the title is invalid, using the error message
 //   stored inside the relevant variant of the `TicketNewError` enum.
 //   When the description is invalid, instead, it should use a default description:
 //   "Description not provided".
 fn easy_ticket(title: String, description: String, status: Status) -> Ticket {
-    todo!()
+    // let ticket = Ticket::new(title.clone(), description.clone(), status.clone());
+    match Ticket::new(title.clone(), description.clone(), status.clone()) {
+        Ok(ticket) => ticket,
+        Err(error) => {
+            match error {
+                TicketNewError::TitleError(title_error) => panic!("{title_error}"),
+                TicketNewError::DescriptionError(_) => Ticket::new(title.clone(), "Description not provided".into(), status.clone()).unwrap()
+            }
+        }
+    }
+
 }
 
 #[derive(Debug, PartialEq, Clone)]
