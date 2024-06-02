@@ -1,3 +1,4 @@
+use std::option::Iter;
 use ticket_fields::{TicketDescription, TicketTitle};
 
 // TODO: Provide an `iter` method that returns an iterator over `&Ticket` items.
@@ -20,11 +21,32 @@ pub enum Status {
     Done,
 }
 
+// impl IntoIterator for &TicketStore {
+//     type Item = std::vec::IntoIter<Item = &Ticket>;
+//     type IntoIter = ();
+//
+//     fn into_iter(self) -> Self::IntoIter {
+//         todo!()
+//     }
+// }
+
+// impl Iterator for TicketStore {
+//     type Item = Ticket;
+//
+//     fn next(&mut self) -> Option<Self::Item> {
+//         todo!()
+//     }
+// }
+
 impl TicketStore {
     pub fn new() -> Self {
         Self {
             tickets: Vec::new(),
         }
+    }
+
+    fn iter(&self) -> std::slice::Iter<Ticket> {
+        self.tickets.iter()
     }
 
     pub fn add_ticket(&mut self, ticket: Ticket) {

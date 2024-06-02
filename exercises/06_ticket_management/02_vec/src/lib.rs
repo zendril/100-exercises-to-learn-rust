@@ -11,11 +11,21 @@
 // We expect `fibonacci(0)` to return `0`, `fibonacci(1)` to return `1`,
 // `fibonacci(2)` to return `1`, and so on.
 pub fn fibonacci(n: u32) -> u32 {
-    // TODO: implement the `fibonacci` function
+
+    // let n = n as usize;
+    // let mut sums: Vec<u32> = vec![0,1];
     //
-    // Hint: use a `Vec` to memoize the results you have already calculated
-    // so that you don't have to recalculate them several times.
-    todo!()
+    // for i in 2..=n {
+    //     sums.push(sums[i-1] + sums[i-2]);
+    // }
+    // sums[n]
+
+    let mut sums: Vec<u32> = vec![0,1];
+
+    for _ in 2..=n {
+        sums.push(sums.last().unwrap() + sums.get(sums.len() - 2).unwrap());
+    }
+    *sums.get(n as usize).unwrap()
 }
 
 #[cfg(test)]
