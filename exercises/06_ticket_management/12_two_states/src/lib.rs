@@ -6,11 +6,12 @@
 // You also need to add a `get` method that takes as input a `TicketId`
 // and returns an `Option<&Ticket>`.
 
+use std::collections::HashMap;
 use ticket_fields::{TicketDescription, TicketTitle};
 
 #[derive(Clone)]
 pub struct TicketStore {
-    tickets: Vec<Ticket>,
+    tickets: HashMap<u64, Ticket>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -40,12 +41,25 @@ pub enum Status {
 impl TicketStore {
     pub fn new() -> Self {
         Self {
-            tickets: Vec::new(),
+            tickets: HashMap::new(),
         }
     }
 
-    pub fn add_ticket(&mut self, ticket: Ticket) {
-        self.tickets.push(ticket);
+    pub fn add_ticket(&mut self, ticket_draft: TicketDraft) -> TicketId{
+        let ticket_id = TicketId(self.tickets.len() as u64);
+        // probably better to introduce counter since we don't want someone removing a ticket and then we have conflicting IDs
+        let ticket = Ticket {
+            id: ticket_id,
+            title: ticket_draft.title,
+            description: ticket_draft.description,
+            status: Status::ToDo
+        };
+        self.tickets.insert(ticket_id.0, ticket);
+        ticket_id
+    }
+
+    fn get(&self, ticket_id: TicketId) -> Option<&Ticket> {
+        self.tickets.get(&ticket_id.0)
     }
 }
 
